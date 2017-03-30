@@ -1,1 +1,13 @@
 /FlaskAPI/venv/
+
+
+#Android
+PlacidAndroid/.iml
+PlacidAndroid/.gradle
+PlacidAndroid/local.properties
+PlacidAndroid/.idea/workspace.xml
+PlacidAndroid/.idea/libraries
+PlacidAndroid/.DS_Store
+PlacidAndroid/build
+PlacidAndroid/captures
+PlacidAndroid/.externalNativeBuild
