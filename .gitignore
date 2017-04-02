@@ -1,6 +1,6 @@
 /FlaskAPI/venv/
 
-
+*.pyc
 #Android
 PlacidAndroid/.iml
 PlacidAndroid/.gradle
