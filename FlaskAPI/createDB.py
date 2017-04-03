@@ -3,17 +3,20 @@ from app import db, connection
 
 # connection = db.engine
 
+#connection.execute("DROP DATABASE [IF EXISTS] hospital;")
+#connection.execute("CREATE DATABASE hospital;")
+#connection.execute("USE hospital;")
 
-connection.execute("CREATE TABLE doctor(id SERIAL PRIMARY KEY ,first_name varchar(50),last_name varchar(50), category varchar(20), specialization varchar(30), password varchar(50),doctor_number varchar(50));")
-sql  = "INSERT INTO doctor(first_name, last_name, category, specializatoin, password,doctor_number) VALUES ('James', 'Brown', 'consultant', '', 'password','555-5555');"
+connection.execute("CREATE TABLE doctor(id SERIAL PRIMARY KEY ,first_name varchar(50),last_name varchar(50), category varchar(20), specialization varchar(30), password varchar(50),tel_number varchar(50));")
+sql  = "INSERT INTO doctor(first_name, last_name, category, specialization, password,doctor_number) VALUES ('James', 'Brown', 'consultant', '', 'password','555-5555');"
 connection.execute(sql)
 
-connection.execute("CREATE TABLE doctor(id SERIAL PRIMARY KEY ,first_name varchar(50),last_name varchar(50), category varchar(20), specialization varchar(30), password varchar(50),doctor_number varchar(50));")
-sql  = "INSERT INTO doctor(first_name, last_name, category, specializatoin, password,doctor_number) VALUES ('Michael', 'Frant', 'resident', '', 'password','112-5234');"
+connection.execute("CREATE TABLE doctor(id SERIAL PRIMARY KEY ,first_name varchar(50),last_name varchar(50), category varchar(20), specialization varchar(30), password varchar(50),tel_number varchar(50));")
+sql  = "INSERT INTO doctor(first_name, last_name, category, specialization, password,doctor_number) VALUES ('Michael', 'Frant', 'resident', '', 'password','112-5234');"
 connection.execute(sql)
 
-connection.execute("CREATE TABLE doctor(id SERIAL PRIMARY KEY ,first_name varchar(50),last_name varchar(50), category varchar(20), specialization varchar(30), password varchar(50),doctor_number varchar(50));")
-sql  = "INSERT INTO doctor(first_name, last_name, category, specializatoin, password,doctor_number) VALUES ('Carla', 'Brown', 'intern', '', 'password','445-5245');"
+connection.execute("CREATE TABLE doctor(id SERIAL PRIMARY KEY ,first_name varchar(50),last_name varchar(50), category varchar(20), specialization varchar(30), password varchar(50),tel_number varchar(50));")
+sql  = "INSERT INTO doctor(first_name, last_name, category, specialization, password,doctor_number) VALUES ('Carla', 'Brown', 'intern', '', 'password','445-5245');"
 connection.execute(sql)
 
 #Considering adding a foreign key for doctor ID in patient table
