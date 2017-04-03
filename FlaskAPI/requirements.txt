@@ -6,6 +6,7 @@ Flask-SQLAlchemy
 Flask-Migrate
 Flask-Login
 psycopg2
+faker
 
 # ----------------------
 # Production Server
