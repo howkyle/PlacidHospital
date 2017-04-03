@@ -18,9 +18,9 @@ connection.execute(sql)
 #connection.execute("CREATE DATABASE hospital;")
 #connection.execute("USE hospital;")'''
 
-connection.execute("CREATE TABLE doctor(id SERIAL PRIMARY KEY ,first_name varchar(50),last_name varchar(50), specialization varchar(30), password varchar(50),doctor_number varchar(50));")
-connection.execute("CREATE TABLE patient(id SERIAL PRIMARY KEY, first_name varchar(50),last_name varchar(50), patient_number varchar(50), dob date, address varchar(30));")
-connection.execute("CREATE TABLE nurse(id SERIAL PRIMARY KEY, first_name varchar(50),last_name varchar(50), dob date, address varchar(30), nurse_number varchar(50), category varchar(20), password varchar(50));")
+connection.execute("CREATE TABLE doctor(id SERIAL PRIMARY KEY ,first_name varchar(50),last_name varchar(50), specialization varchar(30), password varchar(50),tel_number varchar(50));")
+connection.execute("CREATE TABLE patient(id SERIAL PRIMARY KEY, first_name varchar(50),last_name varchar(50), tel_number varchar(50), dob date, address varchar(30));")
+connection.execute("CREATE TABLE nurse(id SERIAL PRIMARY KEY, first_name varchar(50),last_name varchar(50), dob date, address varchar(30), tel_number varchar(50), category varchar(20), password varchar(50));")
 connection.execute("CREATE TABLE disease(id SERIAL PRIMARY KEY, disease_name varchar(40), type varchar (20));")
 connection.execute("CREATE TABLE family_history(id SERIAL PRIMARY KEY, first_name varchar(50), last_name varchar(50), disease int references disease(id), patient int references patient(id));")
 connection.execute("CREATE TABLE procedure(id SERIAL PRIMARY KEY, test varchar(50), patient int references patient(id), doctor int references doctor(id));")
@@ -32,7 +32,7 @@ connection.execute("CREATE TABLE allergy(id SERIAL PRIMARY KEY, allergy_name var
 
 '''
 # inserting values into doctor
-sql  = "INSERT INTO doctor(first_name, last_name, category, specializatoin, password,doctor_number) VALUES ('James', 'Brown', 'consultant', 'password','555-5555');"
+sql  = "INSERT INTO doctor(first_name, last_name, category, specialization, password,doctor_number) VALUES ('James', 'Brown', 'consultant', 'password','555-5555');"
 connection.execute(sql)
 
 sql  = "INSERT INTO doctor(first_name, last_name, category, specialization, password,doctor_number) VALUES ('Michael', 'Frant', 'resident', 'password','112-5234');"
