@@ -18,9 +18,38 @@ def doctorLogin():
 			password = row[0]
 		
 		if password == doc["password"]:
-			return "{'result':'login success'}"
+			return "{'result':'login success','id':"+str(doc["id"])+"}"
 		else:
-			return "{'result':'invalid password'}"
+			return "{'result':'invalid password','id':"+str(doc["id"])+"}"
+
+@app.route("/nurse_login", methods=["POST"])
+def nurseLogin():
+	if request.method =="POST":
+		nurse = request.json
+		result = connection.execute("Select password from nurse where id="+str(nurse["id"])+";")
+		for row in result:
+			password = row[0]
+		
+		if password == nurse["password"]:
+			return "{'result':'login success','id':"+str(nurse["id"])+"}"
+		else:
+			return "{'result':'invalid password','id':"+str(nurse["id"])+"}"
+
+
+@app.route("/secretary_login", methods = ["POST"])
+def secretaryLogin():
+	if request.method =="POST":
+		sec = request.json
+		result = connection.execute("Select password from secretary where id="+str(sec["id"])+";")
+		for row in result:
+			password = row[0]
+		
+		if password == sec["password"]:
+			return "{'result':'login success','id':"+str(sec["id"])+"}"
+		else:
+			return "{'result':'invalid password','id':"+str(sec["id"])+"}"
+
+
 
 
 
