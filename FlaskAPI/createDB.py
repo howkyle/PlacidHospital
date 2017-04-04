@@ -18,9 +18,18 @@ connection.execute(sql)
 #connection.execute("CREATE DATABASE hospital;")
 #connection.execute("USE hospital;")'''
 
-connection.execute("CREATE TABLE doctor(id SERIAL PRIMARY KEY ,first_name varchar(50),last_name varchar(50), category varchar (30), specialization varchar(30), password varchar(50),tel_number varchar(50));")
+connection.execute("CREATE TABLE doctor(id SERIAL PRIMARY KEY ,first_name varchar(50),last_name varchar(50), category varchar (30), /*specialization varchar(30),*/ password varchar(50),tel_number varchar(50));")
+connection.execute("CREATE TABLE consultant(id int PRIMARY KEY references doctor(id), specialization varchar(30));")
+connection.execute("CREATE TABLE intern(id int PRIMARY KEY references doctor(id));")
+connection.execute("CREATE TABLE resident(id int PRIMARY KEY references doctor(id));")
+
 connection.execute("CREATE TABLE patient(id SERIAL PRIMARY KEY, first_name varchar(50),last_name varchar(50), tel_number varchar(50), dob date, address varchar(30));")
+
 connection.execute("CREATE TABLE nurse(id SERIAL PRIMARY KEY, first_name varchar(50),last_name varchar(50), dob date, address varchar(30), tel_number varchar(50), category varchar(20), password varchar(50));")
+connection.execute("CREATE TABLE registered(id int PRIMARY KEY references nurse(id));")
+connection.execute("CREATE TABLE registered_midwife(id int PRIMARY KEY references nurse(id));")
+connection.execute("CREATE TABLE enrolled(id int PRIMARY KEY references nurse(id));")
+
 connection.execute("CREATE TABLE disease(id SERIAL PRIMARY KEY, disease_name varchar(40));")
 connection.execute("CREATE TABLE family_history(id SERIAL PRIMARY KEY, first_name varchar(50), last_name varchar(50), disease int references disease(id), patient int references patient(id));")
 connection.execute("CREATE TABLE procedure(id SERIAL PRIMARY KEY, test varchar(50), patient int references patient(id), doctor int references doctor(id));")
