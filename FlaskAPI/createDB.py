@@ -18,7 +18,7 @@ connection.execute(sql)
 #connection.execute("CREATE DATABASE hospital;")
 #connection.execute("USE hospital;")'''
 
-connection.execute("CREATE TABLE doctor(id SERIAL PRIMARY KEY ,first_name varchar(50),last_name varchar(50), specialization varchar(30), password varchar(50),tel_number varchar(50));")
+connection.execute("CREATE TABLE doctor(id SERIAL PRIMARY KEY ,first_name varchar(50),last_name varchar(50), category varchar (30), specialization varchar(30), password varchar(50),tel_number varchar(50));")
 connection.execute("CREATE TABLE patient(id SERIAL PRIMARY KEY, first_name varchar(50),last_name varchar(50), tel_number varchar(50), dob date, address varchar(30));")
 connection.execute("CREATE TABLE nurse(id SERIAL PRIMARY KEY, first_name varchar(50),last_name varchar(50), dob date, address varchar(30), tel_number varchar(50), category varchar(20), password varchar(50));")
 connection.execute("CREATE TABLE disease(id SERIAL PRIMARY KEY, disease_name varchar(40), type varchar (20));")
