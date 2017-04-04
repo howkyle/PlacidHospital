@@ -11,13 +11,16 @@ def home():
 def doctorLogin():
 	if request.method =="POST":
 		doc = request.json
-		result = connection.execute("Select password from doctor where id="+str(doc["id"])+";")
+		print doc
+		result = connection.execute("Select password, first_name, last_name from doctor where id="+str(doc["id"])+";")
 		for row in result:
 			password = row[0]
+			first_name  = row[1]
+			last_name = row[2]
 		
 		if password == doc["password"]:
 			print "login successful"
-			return "{'result':'login success','id':"+str(doc["id"])+"}"
+			return "{'result':'login success','id':"+str(doc["id"])+",'first_name':'"+first_name+"','last_name':'"+last_name+"'}"
 		else:
 			print "bad pass"
 			return "{'result':'invalid password'}"
@@ -26,12 +29,14 @@ def doctorLogin():
 def nurseLogin():
 	if request.method =="POST":
 		nurse = request.json
-		result = connection.execute("Select password from nurse where id="+str(doc["id"])+",'first_name':"+str(doc["first_name"])+",'last_name':"+str(doc["last_name"])+";")
+		result = connection.execute("Select password from nurse where id="+str(nurse["id"])+";")
 		for row in result:
 			password = row[0]
+			first_name  = row[1]
+			last_name = row[2]
 		
 		if password == nurse["password"]:
-			return "{'result':'login success','id':"+str(nurse["id"])+",'first_name':"+str(nurse["first_name"])+",'last_name':"+str(nurse["last_name"])+"}"
+			return "{'result':'login success','id':"+str(nurse["id"])+",'first_name':'"+first_name+"','last_name':'"+last_name+"'}"
 		else:
 			return "{'result':'invalid password'}"
 
@@ -79,9 +84,9 @@ def viewPatients(count):
 			pDict["id"] = patient[0]
 			pDict["first_name"] = patient[1]
 			pDict["last_name"] = patient[2]
-			pDict["address"] = patient[3]
+			pDict["tel_number"] = patient[3]
 			pDict["dob"] = str(patient[4])
-			pDict["tel_number"] = patient[5]
+			pDict["address"] = patient[5]
 
 			patients.append(pDict)
 			x = x+1
@@ -94,7 +99,23 @@ def viewPatients(count):
 
 		return json.dumps(patients, ensure_ascii=False)
 
+@app.route("/update_patient/<pid>", methods =["POST"])
+def updatePatient(pid):
+	if request.methods == "POST":
+		patient = request.json
+		sql = "update patient set first_name =\'"+str(patient["first_name"])+"\', last_name = \'"+str(patient["last_name"])+"\', tel_number=\'"+str(patient["tel_number"])+"\',dob =\'"+str(patient["dob"])+"\',address=\'"+str(patient["address"])+"\' where id = "+str(pid)+";"
+		
+		try:
+			print sql
+			connection.execute(sql)
+		except:
+			return "{'status':'success'}"
+		else:
+			return "{'status':'invalid'}"
 
+
+
+	
 
 
 
