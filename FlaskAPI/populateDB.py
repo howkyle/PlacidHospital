@@ -92,6 +92,24 @@ def createNurses():
 
 	file.write("/*------------------------------------------------------------*/\n\n")
 
+def createDiseases():
+	file.write("/*-------------------------Diseases------------------------------*/\n")
+
+	diseases = ['cholera', 'flu', 'coronary artery disease', 'diabetes A', 'diabetes B', 'gastroesophageal reflux disease', 'alzheimers disease', 'asthma', 'autism', 'brain cancer', 'bone cancer', 'breast cancer', 'celiac disease']
+	for i in range(len(diseases)):
+		file.write("INSERT INTO disease(disease_name) VALUES ('" + diseases[i] + "');\n")
+
+	file.write("/*------------------------------------------------------------*/\n\n")
+
+def createMedications():
+	file.write("/*-------------------------Medications------------------------------*/\n")
+
+	medications = ['glucophage', 'hydrochlorothiazide', 'azithromycin', 'zocor', 'hydrocodone']
+	for i in range(len(medications)):
+		file.write("INSERT INTO medication(med_name) VALUES ('" + medications[i] + "');\n")
+
+	file.write("/*------------------------------------------------------------*/\n\n")
+
 
 if __name__ == "__main__":
 	file = open("insert.sql", "w+")
@@ -101,5 +119,9 @@ if __name__ == "__main__":
 	createDoctors()
 
 	createNurses()
+
+	createDiseases()
+
+	createMedications()
 
 	file.close()
