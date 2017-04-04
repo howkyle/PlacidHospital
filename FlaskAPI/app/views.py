@@ -18,8 +18,10 @@ def doctorLogin():
 			password = row[0]
 		
 		if password == doc["password"]:
+			print "login successful"
 			return "{'result':'login success','id':"+str(doc["id"])+"}"
 		else:
+			print "bad pass"
 			return "{'result':'invalid password'}"
 
 @app.route("/nurse_login", methods=["POST"])
@@ -49,25 +51,20 @@ def secretaryLogin():
 		else:
 			return "{'result':'invalid password'}"
 
-app.route("/register_patient", methods =["POST"])
+@app.route("/register_patient", methods =["POST"])
 def registerPatient():
 	if request.method == "POST":
+		print "got heeeerererere\n\n\n\n HEHEREHRERERER"
 		time_added = datetime.datetime.now()
-		patient = request.jsonify
-		sql = "insert into patient(first_name,last_name,address, dob, phone_number, date_added) values("+str(patient['first_name'])+","+str(patient['last_name'])+","+str(patient['address'])+","+str(patient['dob'])+","+str(patient['phone_number'])+","+str(patient['doctor_id'])+","+str(time_added)+");"
+		patient = request.json
+		sql = 'insert into patient(first_name,last_name,address,dob,tel_number) values(\''+str(patient["first_name"])+'\',\''+str(patient["last_name"])+'\',\''+str(patient["address"])+'\',\''+str(patient["dob"])+'\',\''+str(patient["tel_number"])+'\');'
 		try:
 			connection.execute(sql)
 		except:
 			return "{'result':'unable to register patient'}"
 		else:
-			sql = "select * from patient where date_added ="+str(time_added)+";"
-			result = connection.execute(sql)
-			if result:
-				for row in result:
-					pid = row[0]
-					print pid
-
-				return {"first_name":str(patient['first_name']),"last_name":str(patient['last_name']),"address":str(patient['address']),"dob":str(patient['dob']),"phone_number":str(patient['phone_number']),"doctor_id":str(patient['doctor_id'])}
+			print "registration successful"
+			return "{ 'status' : 'success','first_name':"+"'"+str(patient["first_name"])+"','last_name':"+"'"+str(patient["last_name"])+"','address':"+"'"+str(patient["address"])+"','dob':"+"'"+str(patient["dob"])+"','phone_number':"+"'"+str(patient["tel_number"])+"'}"
 
 
 
