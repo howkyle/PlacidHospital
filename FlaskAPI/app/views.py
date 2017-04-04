@@ -1,7 +1,5 @@
 from app import app,db, connection
 from flask import render_template, request, redirect, url_for, flash, jsonify
-# from forms import *
-# from models import*
 import json, datetime
 
 
@@ -28,12 +26,12 @@ def doctorLogin():
 def nurseLogin():
 	if request.method =="POST":
 		nurse = request.json
-		result = connection.execute("Select password from nurse where id="+str(nurse["id"])+";")
+		result = connection.execute("Select password from nurse where id="+str(doc["id"])+",'first_name':"+str(doc["first_name"])+",'last_name':"+str(doc["last_name"])+";")
 		for row in result:
 			password = row[0]
 		
 		if password == nurse["password"]:
-			return "{'result':'login success','id':"+str(nurse["id"])+"}"
+			return "{'result':'login success','id':"+str(nurse["id"])+",'first_name':"+str(nurse["first_name"])+",'last_name':"+str(nurse["last_name"])+"}"
 		else:
 			return "{'result':'invalid password'}"
 
@@ -47,15 +45,13 @@ def secretaryLogin():
 			password = row[0]
 		
 		if password == sec["password"]:
-			return "{'result':'login success','id':"+str(sec["id"])+"}"
+			return "{'result':'login success','id':"+str(sec["id"])+",'first_name':"+str(sec["first_name"])+",'last_name':"+str(sec["last_name"])+"}"
 		else:
 			return "{'result':'invalid password'}"
 
 @app.route("/register_patient", methods =["POST"])
 def registerPatient():
 	if request.method == "POST":
-		print "got heeeerererere\n\n\n\n HEHEREHRERERER"
-		time_added = datetime.datetime.now()
 		patient = request.json
 		sql = 'insert into patient(first_name,last_name,address,dob,tel_number) values(\''+str(patient["first_name"])+'\',\''+str(patient["last_name"])+'\',\''+str(patient["address"])+'\',\''+str(patient["dob"])+'\',\''+str(patient["tel_number"])+'\');'
 		try:
@@ -63,9 +59,40 @@ def registerPatient():
 		except:
 			return "{'result':'unable to register patient'}"
 		else:
-			print "registration successful"
 			return "{ 'status' : 'success','first_name':"+"'"+str(patient["first_name"])+"','last_name':"+"'"+str(patient["last_name"])+"','address':"+"'"+str(patient["address"])+"','dob':"+"'"+str(patient["dob"])+"','phone_number':"+"'"+str(patient["tel_number"])+"'}"
 
+
+
+@app.route("/view_all_patients/<count>", methods =["GET"])
+def viewPatients(count):
+	if request.method == "GET":
+		sql = "select * from patient;"
+		result = connection.execute(sql)
+
+		patients = []
+
+		x = 0
+		count = int(count)
+
+		for patient in result:
+			pDict = {}
+			pDict["id"] = patient[0]
+			pDict["first_name"] = patient[1]
+			pDict["last_name"] = patient[2]
+			pDict["address"] = patient[3]
+			pDict["dob"] = str(patient[4])
+			pDict["tel_number"] = patient[5]
+
+			patients.append(pDict)
+			x = x+1
+			print x
+			print count
+			if (count>0) and (x == count):
+					print x
+					break
+				
+
+		return json.dumps(patients, ensure_ascii=False)
 
 
 
