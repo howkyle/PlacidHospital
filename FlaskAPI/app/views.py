@@ -324,6 +324,36 @@ def addVitalSign(pid):
 
 
 
+@app.route("/most_allergic", methods = ["GET"])
+def getMostAllergic():
+	if request.method == "GET":
+		sql = "select "
+
+
+
+@app.route("/nurse_admin_patient", methods = ["POST"])
+def getNurseAdmin():
+	if request.method == "POST":
+		data  = request.json
+
+		pid  = data["patient"]
+		date = data["date"]
+
+		sql = "select first_name, last_name from nurse inner join administer_medication on nurse.id = administer_medication.nurseid where administer_medication.patientid ="+str(pid)+" and administer_date = \'"+str(date)+"\';"
+
+		try:
+			names = []
+			result = connection.execute(sql)
+			for row in result:
+				name = str(row[0])+ " "+str(row[1])
+				names.append(names)
+
+		except:
+			return "{'status':'failure'}"
+		else:
+			return json.dumps(names, ensure_ascii=False)
+
+
 
 
 
