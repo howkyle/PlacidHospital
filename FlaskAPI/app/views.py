@@ -136,6 +136,22 @@ def getAllergies(pid):
 			return json.dumps(allergies, ensure_ascii=False)
 
 
+@app.route("/get_patient_diagnosis", methods =["POST"])
+def getDiagnoses():
+	if request.method == "POST":
+		data = request.json
+		diagnosis = data["diagnosis"]
+		start_date = data["start_date"]
+		end_date = data["end_date"]
+
+		sql = "select * from (((patient inner join procedure on patient.id = procedure.patient) inner join test_results on procedure.id = test_results.procedure) inner join diagnosis on test_results.id = diagnosis.resultid) where  diagnosis_date between \'"+ str(start_date)+"\' and \'"+str(end_date)+"\';"
+		result = connection.execute(sql)
+
+		for patient in result:
+			print patient[1]
+
+		return "lol"
+
 
 	
 
