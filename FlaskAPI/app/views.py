@@ -45,14 +45,17 @@ def nurseLogin():
 def secretaryLogin():
 	if request.method =="POST":
 		sec = request.json
-		result = connection.execute("Select password from secretary where id="+str(sec["id"])+";")
+		result = connection.execute("Select password,first_name, last_name from secretary where id="+str(sec["id"])+";")
 		for row in result:
 			password = row[0]
+			first_name  = row[1]
+			last_name = row[2]
 		
 		if password == sec["password"]:
-			return "{'result':'login success','id':"+str(sec["id"])+",'first_name':"+str(sec["first_name"])+",'last_name':"+str(sec["last_name"])+"}"
+			return "{'result':'login success','id':\'"+str(sec["id"])+"\','first_name':\'"+first_name+"\','last_name':\'"+last_name+"\'}"
 		else:
 			return "{'result':'invalid password'}"
+
 
 @app.route("/register_patient", methods =["POST"])
 def registerPatient():
@@ -90,28 +93,47 @@ def viewPatients(count):
 
 			patients.append(pDict)
 			x = x+1
-			print x
-			print count
 			if (count>0) and (x == count):
-					print x
 					break
 				
-
 		return json.dumps(patients, ensure_ascii=False)
+
+
 
 @app.route("/update_patient/<pid>", methods =["POST"])
 def updatePatient(pid):
-	if request.methods == "POST":
+	if request.method == "POST":
 		patient = request.json
-		sql = "update patient set first_name =\'"+str(patient["first_name"])+"\', last_name = \'"+str(patient["last_name"])+"\', tel_number=\'"+str(patient["tel_number"])+"\',dob =\'"+str(patient["dob"])+"\',address=\'"+str(patient["address"])+"\' where id = "+str(pid)+";"
+		pid = int(pid)
+		sql = "update patient set first_name =\'"+str(patient["first_name"])+"\', last_name = \'"+str(patient["last_name"])+"\', tel_number=\'"+str(patient["tel_number"])+"\',dob =\'"+str(patient["dob"])+"\',address=\'"+str(patient["address"])+"\' where id ="+str(pid)+";"
 		
 		try:
 			print sql
 			connection.execute(sql)
 		except:
-			return "{'status':'success'}"
-		else:
 			return "{'status':'invalid'}"
+		else:
+			return "{'status':'success'}"
+
+@app.route("/get_allergies/<pid>", methods = ["GET"])
+def getAllergies(pid):
+
+	if request.method == "GET":
+		# pid = int(pid)
+		sql = "select name from (medication inner join allergy on medication.id = allergy.medicationid) where patientid ="+str(pid)+";"
+		
+		try:
+			allergies = []
+			result = connection.execute(sql)
+			print result
+			for allergy in result:
+				print allergy
+				allergies.append(allergy[0])
+
+		except:
+			return "{'status':'invalid'}"
+		else:
+			return json.dumps(allergies, ensure_ascii=False)
 
 
 
