@@ -136,6 +136,48 @@ def getAllergies(pid):
 			return json.dumps(allergies, ensure_ascii=False)
 
 
+@app.route("/get_patient_diagnosis", methods =["POST"])
+def getDiagnoses():
+	if request.method == "POST":
+		data = request.json
+		diagnosis = data["diagnosis"]
+		start_date = data["start_date"]
+		end_date = data["end_date"]
+
+		sql = "select patient.id, first_name, last_name,tel_number,dob,address from (((patient inner join procedure on patient.id = procedure.patient) inner join test_results on procedure.id = test_results.procedure) inner join diagnosis on test_results.id = diagnosis.resultid) where  diagnosis_date between \'"+ str(start_date)+"\' and \'"+str(end_date)+"\';"
+		result = connection.execute(sql)
+
+		patients = []
+
+		for patient in result:
+			pDict = {}
+			pDict["id"] = patient[0]
+			pDict["first_name"] = patient[1]
+			pDict["last_name"] = patient[2]
+			pDict["tel_number"] = patient[3]
+			pDict["dob"] = str(patient[4])
+			pDict["address"] = patient[5]
+
+			patients.append(pDict)
+
+		return json.dumps(patients, ensure_ascii=False)
+		
+
+@app.route("/get_test_results/<pid>", methods = ["GET"])
+def getTestResults(pid):
+	if request.method == "GET":
+		sql = "select results from test_results inner join procedure on test_results.procedure = procedure.id where procedure.patient ="+str(pid)+";"
+		try :
+			result = connection.execute(sql)
+			test_results = []
+			for row in result:
+				test_results.append(row[0])
+
+		except:
+			return "{'status':'failure'}"
+		else:
+			return json.dumps(test_results, ensure_ascii=False)
+
 
 	
 
