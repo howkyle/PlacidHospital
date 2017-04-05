@@ -54,6 +54,7 @@ def createTables():
 	insert += "DROP TABLE IF EXISTS scan CASCADE;\n"
 	insert += "DROP TABLE IF EXISTS result_scan CASCADE;\n"
 	insert += "DROP TABLE IF EXISTS administer_medication CASCADE;\n"
+	insert += "DROP TABLE IF EXISTS treatment_diagnosis CASCADE;\n"
 	insert += "\n"
 
 	insert += "CREATE TABLE secretary(id SERIAL PRIMARY KEY, first_name varchar(50),last_name varchar(50),password varchar(30));\n"
