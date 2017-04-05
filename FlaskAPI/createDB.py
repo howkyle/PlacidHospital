@@ -32,13 +32,11 @@ connection.execute("CREATE TABLE enrolled(id int PRIMARY KEY references nurse(id
 
 connection.execute("CREATE TABLE disease(id SERIAL PRIMARY KEY, disease_name varchar(40));")
 connection.execute("CREATE TABLE family_history(id SERIAL PRIMARY KEY, first_name varchar(50), last_name varchar(50), disease int references disease(id), patient int references patient(id));")
-connection.execute("CREATE TABLE procedure(id SERIAL PRIMARY KEY, test varchar(50), patient int references patient(id), doctor int references doctor(id));")
+connection.execute("CREATE TABLE procedure(id SERIAL PRIMARY KEY, test varchar(50), patient int references patient(id));")
 connection.execute("CREATE TABLE test_results(id SERIAL PRIMARY KEY, symptoms varchar(50), procedure int references procedure(id));")
 connection.execute("CREATE TABLE diagnosis(id SERIAL PRIMARY KEY, diagnosis_date date, disease int references disease(id), results int references test_results(id));")
 connection.execute("CREATE TABLE treatment(id SERIAL PRIMARY KEY, treatment_date date, diagnosis int references diagnosis(id));")
 connection.execute("CREATE TABLE medication(id SERIAL PRIMARY KEY, name varchar(50), dosage varchar (30));")
-connection.execute("CREATE TABLE allergy(id SERIAL PRIMARY KEY, allergy_name varchar(50), medication int references medication(id));")
-
 '''
 # inserting values into doctor
 sql  = "INSERT INTO doctor(first_name, last_name, category, specialization, password,doctor_number) VALUES ('James', 'Brown', 'consultant', 'password','555-5555');"

@@ -12,8 +12,16 @@ numPatients = 10;
 numNurses = 10;
 numDoctors = 10;
 famHistorySize = 30;
+numProcedures = 10;
+numAllergies = 10;
 
 diseases = ['cholera', 'flu', 'coronary artery disease', 'diabetes A', 'diabetes B', 'gastroesophageal reflux disease', 'alzheimers disease', 'asthma', 'autism', 'brain cancer', 'bone cancer', 'breast cancer', 'celiac disease']
+
+procedures = ['skin prick test', 'skin patch test', 'blood test', 'intradermal test', 'western blot', 'tb skin test']
+
+results = ['no issue', 'mild concern', 'moderate concern', 'serious concern']
+
+medications = ['glucophage', 'hydrochlorothiazide', 'azithromycin', 'zocor', 'hydrocodone']
 
 def createTables():
 	file.write("/*--------------------------Create Tables-----------------------------*/\n")
@@ -36,6 +44,7 @@ def createTables():
 	insert += "DROP TABLE IF EXISTS medication CASCADE;\n"
 	insert += "DROP TABLE IF EXISTS allergy CASCADE;\n"
 	insert += "DROP TABLE IF EXISTS secretary CASCADE;\n"
+	insert += "DROP TABLE IF EXISTS treatment_medication CASCADE;\n"
 	insert += "\n"
 
 	insert += "CREATE TABLE secretary(id SERIAL PRIMARY KEY, first_name varchar(50),last_name varchar(50),password varchar(30));\n"
@@ -58,7 +67,10 @@ def createTables():
 	insert += "CREATE TABLE diagnosis(id SERIAL PRIMARY KEY, diagnosis_date date, disease int references disease(id), results int references test_results(id));\n"
 	insert += "CREATE TABLE treatment(id SERIAL PRIMARY KEY, treatment_date date, diagnosis int references diagnosis(id));\n"
 	insert += "CREATE TABLE medication(id SERIAL PRIMARY KEY, name varchar(50));\n"
-	insert += "CREATE TABLE allergy(id SERIAL PRIMARY KEY, allergy_name varchar(50));\n"
+	insert += "CREATE TABLE allergy(id SERIAL PRIMARY KEY, patientID int references patient(id), medicationID int references medication(id));\n"
+	insert += "CREATE TABLE treatment_medication(id SERIAL PRIMARY KEY, medication int references medication(id), treatment int references treatment(id));\n"
+	
+	#insert += "CREATE TABLE allergy(id SERIAL PRIMARY KEY, allergy_name varchar(50));\n"
 
 	file.write(insert)
 
@@ -79,9 +91,6 @@ def createSecretaries():
 
 
 	file.write("/*------------------------------------------------------------*/\n\n")
-
-
-
 
 def createPatients():
 	file.write("/*-------------------------Patients----------------------------*/\n")
@@ -186,7 +195,6 @@ def createDiseases():
 def createMedications():
 	file.write("/*-------------------------Medications------------------------------*/\n")
 
-	medications = ['glucophage', 'hydrochlorothiazide', 'azithromycin', 'zocor', 'hydrocodone']
 	for i in range(len(medications)):
 		file.write("INSERT INTO medication(name) VALUES ('" + medications[i] + "');\n")
 
@@ -209,7 +217,98 @@ def createFamilyHistory():
 
 	file.write("/*------------------------------------------------------------*/\n\n")
 
-#def createAllergies():
+def createProcedures():
+	procedureIDs = []
+
+	file.write("/*-------------------------Procedures------------------------------*/\n")
+
+	for i in range(numProcedures):
+		procedureID = random.randint(0, len(procedures) - 1)
+		procedureIDs.append(procedureID)
+
+		patientID = random.randint(1, numPatients)
+
+		insert = "'" + procedures[procedureID] + "'," + str(patientID)
+
+		file.write("INSERT INTO procedure(test, patient) VALUES (" + insert + ");\n")
+
+
+	file.write("/*------------------------------------------------------------*/\n\n")
+
+def createTestResults():
+	file.write("/*-------------------------Test Results------------------------------*/\n")
+
+	for i in range(numProcedures):
+		resultIndex = random.randint(0, len(results) - 1)
+
+		insert = "'" + results[resultIndex] + "'," + str(i + 1)
+
+		file.write("INSERT INTO test_results(results, procedure) VALUES (" + insert + ");\n")
+
+	file.write("/*------------------------------------------------------------*/\n\n")
+
+def createDiagnoses():
+	file.write("/*---------------------------Diagnoses------------------------------*/\n")
+
+	treatmentDates = []
+
+	for i in range(numProcedures):
+		year = random.randint(2000, 2017)
+		month = random.randint(1, 12)
+		day = random.randint(1, 28)
+		date = str(year) + "-" + str(month) + "-" + str(day)
+
+		treatmentDates.append(str(year + 1) + "-" + str(month) + "-" + str(day))
+
+		diseaseIndex = random.randint(0, len(diseases) - 1)
+
+		insert = "'" + date + "','" + diseases[diseaseIndex] + "'," + str(i+1)
+
+		file.write("INSERT INTO diagnosis(diagnosis_date, disease, results) VALUES (" + insert + ");\n")
+
+	file.write("/*------------------------------------------------------------*/\n\n")
+
+	createTreatments(treatmentDates)
+
+def createTreatments(dates):
+	file.write("/*---------------------------Treatments------------------------------*/\n")
+
+	for i in range(len(dates)):
+		
+
+		insert = "'" + dates[i] + "'," + str(i + 1)
+
+		file.write("INSERT INTO treatment(treatment_date, diagnosis) VALUES (" + insert + ");\n")
+
+	file.write("/*------------------------------------------------------------*/\n\n")
+
+def createTreatmentMedications():
+	file.write("/*---------------------------Treatment Medication------------------------------*/\n")
+
+	for i in range(numProcedures):
+		medicineIndex = random.randint(1, len(medications))
+
+		insert = str(medicineIndex) + "," + str(i + 1)
+
+		file.write("INSERT INTO treatment_medication(medication, treatment) VALUES (" + insert + ");\n")
+
+	file.write("/*------------------------------------------------------------*/\n\n")
+
+def createAllergies():
+	file.write("/*---------------------------Allergies------------------------------*/\n")
+
+	for i in range(numAllergies):
+		patientIndex = random.randint(1, numPatients)
+
+		medicineIndex = random.randint(1, len(medications))
+
+		insert = str(patientIndex) + "," + str(medicineIndex)
+
+		file.write("INSERT INTO allergy(patientID, medicationID) VALUES (" + insert + ");\n")
+
+
+	file.write("/*------------------------------------------------------------*/\n\n")
+
 
 
 if __name__ == "__main__":
@@ -230,5 +329,15 @@ if __name__ == "__main__":
 	createMedications()
 
 	createFamilyHistory()
+
+	createProcedures()
+
+	createTestResults()
+
+	createDiagnoses()
+
+	createTreatmentMedications()
+
+	createAllergies()
 
 	file.close()
