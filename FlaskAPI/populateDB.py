@@ -84,7 +84,7 @@ def createTables():
 	insert += "CREATE TABLE scan(id SERIAL PRIMARY KEY, scanImg varchar(100));\n"
 	insert += "CREATE TABLE result_scan(id SERIAL PRIMARY KEY, resultID int references test_results(id), scanID int references scan(id));\n"
 	insert += "CREATE TABLE administer_medication(id SERIAL PRIMARY KEY, nurseID int references nurse(id), patientID int references patient(id), administer_date date);\n"
-	insert += "CREATE TABLE treatment_diagnosis(id SERIAL PRIMARY KEY, treatmentID int references treatment(id), diagnosisID int references diagnosis(id));\n"
+	insert += "CREATE TABLE treatment_diagnosis(id SERIAL PRIMARY KEY, treatmentID int references treatment(id), diagnosisID int references diagnosis(id) ON DELETE CASCADE );\n"
 
 	#insert += "CREATE TABLE allergy(id SERIAL PRIMARY KEY, allergy_name varchar(50));\n"
 
@@ -244,7 +244,7 @@ def createProcedures():
 
 		patientID = random.randint(1, numPatients)
 
-		insert = "'" + procedures[procedureID] + "'," + str(patientID)
+		insert = "'" + procedures[procedureID] + "'," + str(i + 1)
 
 		file.write("INSERT INTO procedure(test, patient) VALUES (" + insert + ");\n")
 
@@ -432,11 +432,7 @@ if __name__ == "__main__":
 
 	createDiagnosisDiseases()
 
-<<<<<<< HEAD
 	#createTreatmentDiagnosis()
-=======
-	createTreatmentDiagnosis()
->>>>>>> 42af49341e93961e9eb4c20fbeb84223f6c74e59
 
 	#createTreatments()
 
