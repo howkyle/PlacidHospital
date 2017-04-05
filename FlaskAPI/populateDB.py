@@ -54,6 +54,7 @@ def createTables():
 	insert += "DROP TABLE IF EXISTS scan CASCADE;\n"
 	insert += "DROP TABLE IF EXISTS result_scan CASCADE;\n"
 	insert += "DROP TABLE IF EXISTS administer_medication CASCADE;\n"
+	insert += "DROP TABLE IF EXISTS treatment_diagnosis CASCADE;\n"
 	insert += "\n"
 
 	insert += "CREATE TABLE secretary(id SERIAL PRIMARY KEY, first_name varchar(50),last_name varchar(50),password varchar(30));\n"
@@ -83,8 +84,7 @@ def createTables():
 	insert += "CREATE TABLE scan(id SERIAL PRIMARY KEY, scanImg varchar(100));\n"
 	insert += "CREATE TABLE result_scan(id SERIAL PRIMARY KEY, resultID int references test_results(id), scanID int references scan(id));\n"
 	insert += "CREATE TABLE administer_medication(id SERIAL PRIMARY KEY, nurseID int references nurse(id), patientID int references patient(id), administer_date date);\n"
-	#insert += "CREATE TABLE treatment_diagnosis(id SERIAL PRIMARY KEY, treatmentID int references treatment(id), diagnosisID int references diagnosis(id));\n"
-
+	insert += "CREATE TABLE treatment_diagnosis(id SERIAL PRIMARY KEY, treatmentID int references treatment(id), diagnosisID int references diagnosis(id));\n"
 
 	#insert += "CREATE TABLE allergy(id SERIAL PRIMARY KEY, allergy_name varchar(50));\n"
 
@@ -432,7 +432,11 @@ if __name__ == "__main__":
 
 	createDiagnosisDiseases()
 
+<<<<<<< HEAD
 	#createTreatmentDiagnosis()
+=======
+	createTreatmentDiagnosis()
+>>>>>>> 42af49341e93961e9eb4c20fbeb84223f6c74e59
 
 	#createTreatments()
 

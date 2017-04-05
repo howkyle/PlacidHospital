@@ -144,7 +144,7 @@ def getDiagnoses():
 		start_date = data["start_date"]
 		end_date = data["end_date"]
 
-		sql = "select patient.id, first_name, last_name,tel_number,dob,address from (((patient inner join procedure on patient.id = procedure.patient) inner join test_results on procedure.id = test_results.procedure) inner join diagnosis on test_results.id = diagnosis.resultid) where  diagnosis_date between \'"+ str(start_date)+"\' and \'"+str(end_date)+"\';"
+		sql = "select patient.id, first_name, last_name,tel_number,dob,address from (((patient inner join procedure on patient.id = procedure.patient) inner join test_results on procedure.id = test_results.procedure) inner join diagnosis on test_results.id = diagnosis.resultid) where  diagnosis_date between \'"+ str(start_date)+"\' and \'"+str(end_date)+"\' and diagnosis.conclusion =\'"+str(diagnosis)+"\';"
 		result = connection.execute(sql)
 
 		patients = []
@@ -179,8 +179,34 @@ def getTestResults(pid):
 			return json.dumps(test_results, ensure_ascii=False)
 
 
-	
+	@app.route("/get_medical_data/<pid>", methods = ["GET"])
+	def getMedicalData(pid):
+		if request.method == "GET":
+			sql = "select "
 
 
+@app.route("/get_interns", methods =["GET"])
+def getInterns():
+	if request.method == "GET":
+		sql = "select first_name, last_name from doctor where category = 'intern';"
+
+		try:
+			interns =[]
+			result = connection.execute(sql)
+			for doc in result:
+				name = doc[0]+" "+doc[1]
+				interns.append(name)
+		except:
+			return "{'status':'failure'}"
+		else:
+			return json.dumps(interns, ensure_ascii=False)
+
+
+
+
+
+
+
+# select test, results, conclusion, medication.name from ((((medication inner join treatment_medication on medication.id = treatment_medication.medication) inner join treatment on treatment_medication.treatment = treatment.id) inner join 
 
 
