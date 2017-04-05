@@ -8,15 +8,15 @@ streets = ['Maverly St', 'Brown St', 'Marine St', 'Fenton St', 'Fillo Ave', 'Qon
 cities = ['Kingston', 'MoBay', 'Rocky', 'Fort Dunn', 'Carton', 'Portmore', 'Stonehenge', 'Katon', 'Harlem']
 
 numSecretaties = 1;
-numPatients = 500000;
+numPatients = 1000;
 numNurses = 10;
 numDoctors = 10;
 famHistorySize = 100;
-numProcedures = 250000;
-numAllergies = 250000;
-numScans = 100;
+numProcedures = 500;
+numAllergies = 500;
+numScans = 50;
 numTreatments = 500;
-numAdministered = 500;
+numAdministered = 5;
 
 diseases = ['cholera', 'flu', 'coronary artery disease', 'diabetes A', 'diabetes B', 'gastroesophageal reflux disease', 'alzheimers disease', 'asthma', 'autism', 'brain cancer', 'bone cancer', 'breast cancer', 'celiac disease']
 
@@ -75,7 +75,7 @@ def createTables():
 	insert += "CREATE TABLE test_results(id SERIAL PRIMARY KEY, results varchar(50), procedure int references procedure(id));\n"
 	insert += "CREATE TABLE diagnosis(id SERIAL PRIMARY KEY, conclusion varchar(30), diagnosis_date date, resultID int references test_results(id));\n"
 	#insert += "CREATE TABLE treatment(id SERIAL PRIMARY KEY, treatment_date date, diagnosis int references diagnosis(id));\n"
-	insert += "CREATE TABLE treatment(id SERIAL PRIMARY KEY, doctorID int references doctor(id), patientID int references patient(id), treatment_date date);\n"
+	insert += "CREATE TABLE treatment(id SERIAL PRIMARY KEY, doctorID int references doctor(id), patientID int references patient(id), treatment_date date, diagnosisID int references diagnosis(id));\n"
 	insert += "CREATE TABLE medication(id SERIAL PRIMARY KEY, name varchar(50));\n"
 	insert += "CREATE TABLE allergy(id SERIAL PRIMARY KEY, patientID int references patient(id), medicationID int references medication(id));\n"
 	insert += "CREATE TABLE diagnosis_disease(id SERIAL PRIMARY KEY, diseaseID int references disease(id), diagnosisID int references diagnosis(id));\n"
@@ -83,6 +83,8 @@ def createTables():
 	insert += "CREATE TABLE scan(id SERIAL PRIMARY KEY, scanImg varchar(100));\n"
 	insert += "CREATE TABLE result_scan(id SERIAL PRIMARY KEY, resultID int references test_results(id), scanID int references scan(id));\n"
 	insert += "CREATE TABLE administer_medication(id SERIAL PRIMARY KEY, nurseID int references nurse(id), patientID int references patient(id), administer_date date);\n"
+	#insert += "CREATE TABLE treatment_diagnosis(id SERIAL PRIMARY KEY, treatmentID int references treatment(id), diagnosisID int references diagnosis(id));\n"
+
 
 	#insert += "CREATE TABLE allergy(id SERIAL PRIMARY KEY, allergy_name varchar(50));\n"
 
@@ -290,7 +292,7 @@ def createTreatments():
 	file.write("/*---------------------------Treatments------------------------------*/\n")
 
 	#for i in range(len(dates)):
-	for i in range(numTreatments):
+	for i in range(numProcedures):
 
 		doctorIndex = random.randint(1, numDoctors)
 		patientIndex = random.randint(1, numPatients)
@@ -302,9 +304,9 @@ def createTreatments():
 		
 		#insert = str(doctorIndex) + "," + str(i + 1) + "," + dates[i]
 		#insert = str(doctorIndex) + "," + str(patientIndex) + ",'" + dates[i] + "'"
-		insert = str(doctorIndex) + "," + str(patientIndex) + ",'" + date + "'"
+		insert = str(doctorIndex) + "," + str(patientIndex) + ",'" + date + "'," + str(i + 1)
 
-		file.write("INSERT INTO treatment(doctorID,patientID,treatment_date) VALUES (" + insert + ");\n")
+		file.write("INSERT INTO treatment(doctorID,patientID,treatment_date, diagnosisID) VALUES (" + insert + ");\n")
 
 	file.write("/*------------------------------------------------------------*/\n\n")
 
@@ -331,6 +333,18 @@ def createTreatmentMedications():
 		file.write("INSERT INTO treatment_medication(medication, treatment) VALUES (" + insert + ");\n")
 
 	file.write("/*------------------------------------------------------------*/\n\n")
+
+def createTreatmentDiagnosis():
+	file.write("/*---------------------------Treatment Medication------------------------------*/\n")
+
+	for i in range(numProcedures):
+
+		insert = str(i + 1) + "," + str(i + 1)
+
+		file.write("INSERT INTO treatment_diagnosis(treatmentID, diagnosisID) VALUES (" + insert + ");\n")
+
+	file.write("/*------------------------------------------------------------*/\n\n")
+
 
 def createScans():
 	file.write("/*---------------------------Scans------------------------------*/\n")
@@ -417,6 +431,8 @@ if __name__ == "__main__":
 	createDiagnoses()
 
 	createDiagnosisDiseases()
+
+	#createTreatmentDiagnosis()
 
 	#createTreatments()
 
