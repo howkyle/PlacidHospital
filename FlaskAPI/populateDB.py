@@ -14,12 +14,13 @@ numDoctors = 10;
 famHistorySize = 30;
 numProcedures = 10;
 numAllergies = 10;
+numScans = (10);
 
 diseases = ['cholera', 'flu', 'coronary artery disease', 'diabetes A', 'diabetes B', 'gastroesophageal reflux disease', 'alzheimers disease', 'asthma', 'autism', 'brain cancer', 'bone cancer', 'breast cancer', 'celiac disease']
 
 procedures = ['skin prick test', 'skin patch test', 'blood test', 'intradermal test', 'western blot', 'tb skin test']
 
-results = ['no issue', 'mild concern', 'moderate concern', 'serious concern']
+results = ['mild concern', 'moderate concern', 'serious concern']
 
 medications = ['glucophage', 'hydrochlorothiazide', 'azithromycin', 'zocor', 'hydrocodone']
 
@@ -45,6 +46,9 @@ def createTables():
 	insert += "DROP TABLE IF EXISTS allergy CASCADE;\n"
 	insert += "DROP TABLE IF EXISTS secretary CASCADE;\n"
 	insert += "DROP TABLE IF EXISTS treatment_medication CASCADE;\n"
+	insert += "DROP TABLE IF EXISTS diagnosis_disease CASCADE;\n"
+	insert += "DROP TABLE IF EXISTS scan CASCADE;\n"
+	insert += "DROP TABLE IF EXISTS result_scan CASCADE;\n"
 	insert += "\n"
 
 	insert += "CREATE TABLE secretary(id SERIAL PRIMARY KEY, first_name varchar(50),last_name varchar(50),password varchar(30));\n"
@@ -63,13 +67,17 @@ def createTables():
 	insert += "CREATE TABLE disease(id SERIAL PRIMARY KEY, disease_name varchar(40));\n"
 	insert += "CREATE TABLE family_history(id SERIAL PRIMARY KEY, first_name varchar(50), last_name varchar(50), disease int references disease(id), patient int references patient(id));\n"
 	insert += "CREATE TABLE procedure(id SERIAL PRIMARY KEY, test varchar(50), patient int references patient(id));\n"
-	insert += "CREATE TABLE test_results(id SERIAL PRIMARY KEY, symptoms varchar(50), procedure int references procedure(id));\n"
-	insert += "CREATE TABLE diagnosis(id SERIAL PRIMARY KEY, diagnosis_date date, disease int references disease(id), results int references test_results(id));\n"
+	insert += "CREATE TABLE test_results(id SERIAL PRIMARY KEY, results varchar(50), procedure int references procedure(id));\n"
+	insert += "CREATE TABLE diagnosis(id SERIAL PRIMARY KEY, diagnosis_date date, resultID int references test_results(id));\n"
 	insert += "CREATE TABLE treatment(id SERIAL PRIMARY KEY, treatment_date date, diagnosis int references diagnosis(id));\n"
 	insert += "CREATE TABLE medication(id SERIAL PRIMARY KEY, name varchar(50));\n"
 	insert += "CREATE TABLE allergy(id SERIAL PRIMARY KEY, patientID int references patient(id), medicationID int references medication(id));\n"
+	insert += "CREATE TABLE diagnosis_disease(id SERIAL PRIMARY KEY, diseaseID int references disease(id), diagnosisID int references diagnosis(id));\n"
 	insert += "CREATE TABLE treatment_medication(id SERIAL PRIMARY KEY, medication int references medication(id), treatment int references treatment(id));\n"
+	insert += "CREATE TABLE scan(id SERIAL PRIMARY KEY, scanImg varchar(100));\n"
+	insert += "CREATE TABLE result_scan(id SERIAL PRIMARY KEY, resultID int references test_results(id), scanID int references scan(id));\n"
 	
+
 	#insert += "CREATE TABLE allergy(id SERIAL PRIMARY KEY, allergy_name varchar(50));\n"
 
 	file.write(insert)
@@ -260,11 +268,9 @@ def createDiagnoses():
 
 		treatmentDates.append(str(year + 1) + "-" + str(month) + "-" + str(day))
 
-		diseaseIndex = random.randint(0, len(diseases) - 1)
+		insert = "'" + date + "'," + str(i+1)
 
-		insert = "'" + date + "','" + diseases[diseaseIndex] + "'," + str(i+1)
-
-		file.write("INSERT INTO diagnosis(diagnosis_date, disease, results) VALUES (" + insert + ");\n")
+		file.write("INSERT INTO diagnosis(diagnosis_date,resultID) VALUES (" + insert + ");\n")
 
 	file.write("/*------------------------------------------------------------*/\n\n")
 
@@ -282,6 +288,18 @@ def createTreatments(dates):
 
 	file.write("/*------------------------------------------------------------*/\n\n")
 
+def createDiagnosisDiseases():
+	file.write("/*---------------------------Diagnosis Diseases------------------------------*/\n")
+
+	for i in range(numProcedures):
+		diseaseIndex = random.randint(1, len(diseases))
+
+		insert = str(diseaseIndex) + "," + str(i + 1)
+
+		file.write("INSERT INTO diagnosis_disease(diseaseID, diagnosisID) VALUES (" + insert + ");\n")
+
+	file.write("/*------------------------------------------------------------*/\n\n")
+
 def createTreatmentMedications():
 	file.write("/*---------------------------Treatment Medication------------------------------*/\n")
 
@@ -293,6 +311,30 @@ def createTreatmentMedications():
 		file.write("INSERT INTO treatment_medication(medication, treatment) VALUES (" + insert + ");\n")
 
 	file.write("/*------------------------------------------------------------*/\n\n")
+
+def createScans():
+	file.write("/*---------------------------Scans------------------------------*/\n")
+
+	for i in range(numScans):
+
+		insert = "'scan " + str(i + 1) + "'"
+
+		file.write("INSERT INTO scan(scanImg) VALUES (" + insert + ");\n")
+
+	file.write("/*------------------------------------------------------------*/\n\n")
+
+def createResult_Scans():
+	file.write("/*---------------------------Reult Scans------------------------------*/\n")
+
+	for i in range(numScans):
+		resultIndex = random.randint(1, numProcedures)
+
+		insert = str(resultIndex) + "," + str(i + 1)
+
+		file.write("INSERT INTO result_scan(resultID, scanID) VALUES (" + insert + ");\n")
+
+	file.write("/*------------------------------------------------------------*/\n\n")
+
 
 def createAllergies():
 	file.write("/*---------------------------Allergies------------------------------*/\n")
@@ -336,8 +378,14 @@ if __name__ == "__main__":
 
 	createDiagnoses()
 
+	createDiagnosisDiseases()
+
 	createTreatmentMedications()
 
 	createAllergies()
+
+	createScans()
+
+	createResult_Scans()
 
 	file.close()
