@@ -7,7 +7,7 @@ Flask-Migrate
 Flask-Login
 psycopg2
 faker
-fake-factory
+faker-factory
 
 # ----------------------
 # Production Server
