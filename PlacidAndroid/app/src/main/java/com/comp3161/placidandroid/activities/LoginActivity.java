@@ -3,7 +3,9 @@ package com.comp3161.placidandroid.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -21,6 +23,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,6 +38,9 @@ import android.widget.TextView;
 import com.comp3161.placidandroid.R;
 import com.comp3161.placidandroid.rest.RestLogin;
 import com.comp3161.placidandroid.util.Constants;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,11 +63,14 @@ public class LoginActivity extends AppCompatActivity {
     private View mLoginFormView;
     private Spinner spinner;
     private String[] urls = {Constants.DOCTOR_LOGIN,Constants.NURSE_LOGIN,Constants.SECRETARY_LOGIN};
-
+    private String[] user_types = {"Doctor","Nurse","Secretary"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
+        checkLogin();
         // Set up the login form.
         mUserNameView = (TextInputEditText) findViewById(R.id.email);
 
@@ -91,13 +100,25 @@ public class LoginActivity extends AppCompatActivity {
 
         List<String> list = new ArrayList<String>();
         list.add("Doctor");
-        list.add("Secretary");
         list.add("Nurse");
+        list.add("Secretary");
+
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
                 R.layout.spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(dataAdapter);
+    }
+
+    private void checkLogin()
+    {
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREFS,Context.MODE_PRIVATE);
+        String userId = sharedPreferences.getString("userid","none");
+        if(!userId.contentEquals("none")){
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
 
@@ -138,11 +159,12 @@ public class LoginActivity extends AppCompatActivity {
             mUserNameView.setError(getString(R.string.error_field_required));
             focusView = mUserNameView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mUserNameView.setError(getString(R.string.error_invalid_email));
-            focusView = mUserNameView;
-            cancel = true;
         }
+//        } else if (!isEmailValid(email)) {
+//            mUserNameView.setError(getString(R.string.error_invalid_email));
+//            focusView = mUserNameView;
+//            cancel = true;
+//        }
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -153,7 +175,8 @@ public class LoginActivity extends AppCompatActivity {
             // perform the user login attempt.
             showProgress(true);
             String url = urls[spinner.getSelectedItemPosition()];
-            mAuthTask = new UserLoginTask(email, password,url);
+            String userType = user_types[spinner.getSelectedItemPosition()];
+            mAuthTask = new UserLoginTask(email, password,url,userType);
             mAuthTask.execute((Void) null);
         }
     }
@@ -214,11 +237,15 @@ public class LoginActivity extends AppCompatActivity {
         private final String mEmail;
         private final String mPassword;
         String url;
+        String userid;
+        String name;
+        String userType;
 
-        UserLoginTask(String email, String password,String url) {
+        UserLoginTask(String email, String password,String url,String userType) {
             mEmail = email;
             mPassword = password;
             this.url = url;
+            this.userType = userType;
 
         }
 
@@ -230,10 +257,24 @@ public class LoginActivity extends AppCompatActivity {
 
             if(TextUtils.isEmpty(response))
                 return false;
-            else
-                return true;
+            try{
+                JSONObject jsonObject = new JSONObject(response);
+                if(jsonObject.has("id")){
+                    userid = jsonObject.getString("id");
+                    String first_name = jsonObject.getString("first_name");
+                    String last_name = jsonObject.getString("last_name");
+                    if(!TextUtils.isEmpty(first_name) && !TextUtils.isEmpty(last_name)){
+                        name = first_name + " " + last_name;
+                    }
+                    return true;
+                }else{
+                    return false;
+                }
+            }catch (JSONException j){
+                Log.d("JsonException",j.getMessage());
+            }
 
-
+            return false;
             // TODO: register the new account here.
 
         }
@@ -244,6 +285,15 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success) {
+                SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREFS,
+                        Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("userid",userid);
+                editor.putString("user_type",userType);
+                editor.putString("name",name);
+                editor.commit();
+
+
                 launchMainActivity();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -262,6 +312,7 @@ public class LoginActivity extends AppCompatActivity {
     {
         Intent intent = new Intent(this,MainActivity.class);
         startActivity(intent);
+        finish();
     }
 }
 

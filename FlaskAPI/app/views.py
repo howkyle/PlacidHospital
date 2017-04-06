@@ -20,7 +20,7 @@ def doctorLogin():
 		if password == doc["password"]:
 			return "{'result':'login success','id':"+str(doc["id"])+"}"
 		else:
-			return "{'result':'invalid password','id':"+str(doc["id"])+"}"
+			return "{'result':'invalid password'}"
 
 @app.route("/nurse_login", methods=["POST"])
 def nurseLogin():
@@ -33,7 +33,7 @@ def nurseLogin():
 		if password == nurse["password"]:
 			return "{'result':'login success','id':"+str(nurse["id"])+"}"
 		else:
-			return "{'result':'invalid password','id':"+str(nurse["id"])+"}"
+			return "{'result':'invalid password'}"
 
 
 @app.route("/secretary_login", methods = ["POST"])
@@ -47,7 +47,7 @@ def secretaryLogin():
 		if password == sec["password"]:
 			return "{'result':'login success','id':"+str(sec["id"])+"}"
 		else:
-			return "{'result':'invalid password','id':"+str(sec["id"])+"}"
+			return "{'result':'invalid password'}"
 
 
 

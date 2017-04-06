@@ -22,13 +22,13 @@ public class RestLogin {
         String response="";
         try {
             JSONObject json = new JSONObject();
-            json.put("username", username);
+            json.put("id", username);
             json.put("password",password);
 
 
 
             HttpURLConnection conn = (HttpURLConnection)new URL(url).openConnection(); //opens a connection to the server
-
+            conn.setConnectTimeout(1000);
 
             conn.setRequestMethod("POST");//sets the request method as a POST request
 
@@ -43,15 +43,15 @@ public class RestLogin {
             wr.close();  //close the output stream
             int responseCode=conn.getResponseCode();
 
-            if (responseCode == HttpURLConnection.HTTP_OK) {
+            //if (responseCode == HttpURLConnection.HTTP_OK) {
                 String line;
                 BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 while ((line=br.readLine()) != null) {
                     response+=line;
                 }
-            }else{
-                response = "";
-            }
+            //}else{
+              //  response = "";
+            //}
 
         }catch(Exception e){
             response="";

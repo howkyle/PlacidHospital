@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:orientation="vertical">
+        <android.support.v4.widget.SwipeRefreshLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/swiperefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <android.support.v7.widget.RecyclerView
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:id="@+id/meddata_listview"
+                android:scrollbars="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                tools:listitem='@layout/list_medical_data_item' />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"/>
+
+        <ImageView
+            android:id="@+id/no_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/notpresent"
+            android:layout_centerInParent="true"
+            tools:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/txt_notpresent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Medical Data Present"
+            android:textSize="20sp"
+            android:paddingTop="10dp"
+            android:layout_below="@+id/no_content"
+            android:layout_centerHorizontal="true"
+            tools:visibility="gone"/>
+
+
+    </RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@drawable/ic_add_black_24dp" />
+</FrameLayout>
